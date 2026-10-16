@@ -95,10 +95,10 @@ skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=SEED)
 oof = np.zeros(len(X))            # out-of-fold predictions
 test_pred = np.zeros(len(X_test))
 for fold, (tr_idx, va_idx) in enumerate(skf.split(X, y), 1):
-    model = LGBMClassifier(**params)
+    model = LGBMClassifier(**params) # pyright: ignore[reportArgumentType]
     model.fit(X.iloc[tr_idx], y[tr_idx])
-    oof[va_idx] = model.predict_proba(X.iloc[va_idx])[:, 1] # pyright: ignore[reportIndexIssue, reportCallIssue]
-    test_pred += model.predict_proba(X_test)[:, 1] / skf.n_splits
+    oof[va_idx] = model.predict_proba(X.iloc[va_idx])[:, 1] # pyright: ignore[reportArgumentType, reportIndexIssue, reportCallIssue]
+    test_pred += model.predict_proba(X_test)[:, 1] / skf.n_splits # type: ignore
     score = safe_roc_auc(y[va_idx], oof[va_idx])
     print(f"Fold {fold} AUC = {score:.5f}" if not np.isnan(score) else f"Fold {fold} AUC = n/a (not enough class diversity)")
 print(f"\nOverall CV AUC = {safe_roc_auc(y, oof):.5f}")
@@ -131,7 +131,7 @@ print(
 )
 
 ids_match = len(sub) == len(test) and set(sub[sample_id_column]) == set(test[ID])
-order_match = len(sub) == len(test) and (sub[sample_id_column].values == test[ID].values).all()
+order_match = len(sub) == len(test) and (sub[sample_id_column].values == test[ID].values).all() # type: ignore
 print("IDs match test:", ids_match, "| duplicates:", sub[sample_id_column].duplicated().any())
 print("Same ID order as test:", order_match)
 if len(sample_raw) != len(test):
