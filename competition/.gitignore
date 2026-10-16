@@ -1,0 +1,5 @@
+# Ignore the input data files
+competition/input/
+
+# Ignore the submission outputs
+competition/output/
